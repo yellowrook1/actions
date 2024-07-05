@@ -1,0 +1,8 @@
+on:
+  workflow_dispatch:
+
+jobs:
+  I:
+    name: "Testing"
+    runs-on: ubuntu-latest
+    run: echo 10

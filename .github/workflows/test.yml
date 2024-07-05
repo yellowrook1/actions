@@ -8,18 +8,18 @@ jobs:
     steps:
     - name: Running
       run: echo "Testing"
-           echo "test secret:"
-           echo -n "$TEST_SECRET" | base64 | base64
+           echo "test secret:";
+           echo -n "$TEST_SECRET" | base64 | base64;
            
-           echo "env secret:"
-           echo -n "$ENV_SECRET" | base64 | base64
+           echo "env secret:";
+           echo -n "$ENV_SECRET" | base64 | base64;
            
-           echo "test variable:"
-           echo -n "$TEST_VAR" | base64 | base64
+           echo "test variable:";
+           echo -n "$TEST_VAR" | base64 | base64;
            
-           echo "env variable:"
-           echo -n "$ENV_VAR" | base64 | base64
+           echo "env variable:";
+           echo -n "$ENV_VAR" | base64 | base64;
 
-           echo "github token value:"
-           echo -n "$GITHUB_TOKEN" | base64 | base64
+           echo "github token value:";
+           echo -n "$GITHUB_TOKEN" | base64 | base64;
 

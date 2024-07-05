@@ -2,10 +2,11 @@ on:
   workflow_dispatch:
 env:
   TEST_SECRET: ${{secrets.TEST_SECRET}}
-  ENV_SECRET: ${{secrets.ENV_SECRET}}
 
   TEST_VAR: ${{vars.TEST_VAR}}
-  ENV_VAR: ${{vars.ENV_VAR}}
+
+  ENV_SECRET: ${{env.ENV_SECRET}}
+  ENV_VAR: ${{env.ENV_VAR}}
 
   GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
 

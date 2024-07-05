@@ -5,4 +5,7 @@ jobs:
   I:
     name: "Testing"
     runs-on: ubuntu-latest
-    run: echo 10
+    steps:
+    - name: Running
+      run: echo "Testing"
+      

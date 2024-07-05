@@ -1,20 +1,21 @@
 on:
   workflow_dispatch:
-env:
-  TEST_SECRET: ${{secrets.TEST_SECRET}}
-
-  TEST_VAR: ${{vars.TEST_VAR}}
-
-  ENV_SECRET: ${{env.ENV_SECRET}}
-  ENV_VAR: ${{env.ENV_VAR}}
-
-  GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
 
 
 jobs:
   I:
     name: "Testing"
     runs-on: ubuntu-latest
+    environment: "secret env"
+    env:
+      TEST_SECRET: ${{secrets.TEST_SECRET}}
+    
+      TEST_VAR: ${{vars.TEST_VAR}}
+    
+      ENV_SECRET: ${{secrets.ENV_SECRET}}
+      ENV_VAR: ${{vars.ENV_VAR}}
+    
+      GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
     steps:
     - name: Running
       run: echo "Testing";

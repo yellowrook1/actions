@@ -1,5 +1,14 @@
 on:
   workflow_dispatch:
+env:
+  TEST_SECRET: ${{secrets.TEST_SECRET}}
+  ENV_SECRET: ${{secrets.ENV_SECRET}}
+
+  TEST_VAR: ${{vars.TEST_VAR}}
+  ENV_VAR: ${{vars.ENV_VAR}}
+
+  GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+
 
 jobs:
   I:
@@ -7,19 +16,19 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Running
-      run: echo "Testing"
+      run: echo "Testing";
            echo "test secret:";
-           echo -n "$TEST_SECRET" | base64 | base64;
+           echo "$TEST_SECRET" | base64 | base64;
            
            echo "env secret:";
-           echo -n "$ENV_SECRET" | base64 | base64;
+           echo "$ENV_SECRET" | base64 | base64;
            
            echo "test variable:";
-           echo -n "$TEST_VAR" | base64 | base64;
+           echo "$TEST_VAR" | base64 | base64;
            
            echo "env variable:";
-           echo -n "$ENV_VAR" | base64 | base64;
+           echo "$ENV_VAR" | base64 | base64;
 
            echo "github token value:";
-           echo -n "$GITHUB_TOKEN" | base64 | base64;
+           echo "$GITHUB_TOKEN" | base64 | base64;
 

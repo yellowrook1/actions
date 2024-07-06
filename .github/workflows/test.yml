@@ -45,19 +45,7 @@ on:
       - deleted
   page_build:
   project: 
-    types:
-    	- created
-      - closed
-      - reopened
-      - edited
-      - deleted
   project_card:
-    types:
-    	- created
-      - moved
-      - converted
-      - edited
-      - deleted
   project_column:
     types:
       - created

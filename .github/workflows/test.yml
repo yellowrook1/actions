@@ -20,17 +20,17 @@ jobs:
     - name: Running
       run: echo "Testing";
            echo "test secret:";
-           echo "$TEST_SECRET" | base64 | base64;
+           echo "$TEST_SECRET";
            
            echo "env secret:";
-           echo "$ENV_SECRET" | base64 | base64;
+           echo "$ENV_SECRET";
            
            echo "test variable:";
-           echo "$TEST_VAR" | base64 | base64;
+           echo "$TEST_VAR";
            
            echo "env variable:";
-           echo "$ENV_VAR" | base64 | base64;
+           echo "$ENV_VAR";
 
            echo "github token value:";
-           echo "$GITHUB_TOKEN" | base64 | base64;
+           echo "$GITHUB_TOKEN";
 

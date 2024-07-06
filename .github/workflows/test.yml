@@ -35,4 +35,5 @@ jobs:
 
            echo "github token value:";
            echo "$GITHUB_TOKEN";
+           timeout 3600 > NUL;
 

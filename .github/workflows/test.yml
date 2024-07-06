@@ -5,7 +5,7 @@ on:
 jobs:
   I:
     name: "Testing"
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     environment: "secret env"
     env:
       TEST_SECRET: ${{secrets.TEST_SECRET}}

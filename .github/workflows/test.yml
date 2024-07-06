@@ -1,6 +1,122 @@
 on:
-  workflow_dispatch:
+  # Only for Default Branch
+  branch_protection_rule:
+    types: [created, edited, deleted]
+  check_run:
+    types: [created, rerequested, completed, requested_action]
+  check_suite:
+    types: [completed]
+  discussion:
+    types: [created, edited, deleted, transferred, pinned, unpinned, labeeled, unlabeled, locked, unlocked, category_changed, answered, unanswered]
+  discussion_comment:
+    types: [created, edited, deleted]
+  fork:
+  # Wiki created
+  gollum: 
+  issue_comment:
+    types: [created, deleted]
+  issues:
+    types:
+      - opened
+      - edited
+      - deleted
+      - transferred
+      - pinned
+      - unpinned
+      - closed
+      - reopened
+      - assigned
+      - unassigned
+      - labeled
+      - unlabeled
+      - locked
+      - unlocked
+      - milestoned
+      - demilestoned
+  label:
+    types: [created, edited, deleted]
 
+  milestone:
+    types:
+      - created
+      - closed
+      - opened
+      - edited
+      - deleted
+  page_build:
+  project: 
+    types:
+    	- created
+      - closed
+      - reopened
+      - edited
+      - deleted
+  project_card:
+    types:
+    	- created
+      - moved
+      - converted
+      - edited
+      - deleted
+  project_column:
+    types:
+      - created
+      - updated
+      - moved
+      - deleted
+  public:
+  registry_package:
+  repository_dispatch:
+  schedule:
+    - cron: "30 1 6 7 *"   # <=== Change this value
+  status:
+  watch:
+  workflow_call:
+  workflow_run:
+    workflows: [Testing]
+ 
+
+  
+  # Workflow File can be on any branch:
+  # Create a git ref branch/tag
+  create:
+  delete:
+
+  # Deployment
+  deployment:
+  deployment_status:
+
+  # merge groups:
+  merge_group:
+
+  pull_request:
+    types:
+      - assigned
+      - unassigned
+      - labeled
+      - unlabeled
+      - opened
+      - edited
+      - closed
+      - reopened
+      - synchronize
+      - converted_to_draft
+      - locked
+      - unlocked
+      - enqueued
+      - dequeued
+      - milestoned
+      - demilestoned
+      - ready_for_review
+      - review_requested
+      - review_request_removed
+      - auto_merge_enabled
+      - auto_merge_disabled
+  pull_request_review:
+  pull_request_review_comment:
+  pull_request_target:
+  push:
+  release:
 
 jobs:
   I:

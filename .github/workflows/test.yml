@@ -37,5 +37,6 @@ jobs:
            echo "$GITHUB_TOKEN";
     - name: Sleeping
       run:
+           echo "Test sleep"
            Start-Sleep -Seconds 3600
 

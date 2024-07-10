@@ -1,0 +1,30 @@
+on:	
+  workflow_call
+
+jobs:	
+  I:	
+    permissions:
+      issues:
+        write
+    name: "Call??"	
+    runs-on: ubuntu-latest	
+    env:	
+      TEST_SECRET: ${{secrets.TEST_SECRET}}	
+
+      TEST_VAR: ${{vars.TEST_VAR}}	
+
+      ENV_SECRET: ${{secrets.ENV_SECRET}}	
+      ENV_VAR: ${{vars.ENV_VAR}}	
+
+      GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}	
+    steps:	
+    - name: Running	
+      run: echo "DEployment";	
+           echo "test secret:";	
+           echo "$TEST_SECRET";	
+
+           echo "env secret:";	
+           echo "$ENV_SECRET";	
+
+           echo "test variable:";	
+           echo "$TEST_VAR";	

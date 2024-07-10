@@ -4,8 +4,8 @@ on:
 jobs:	
   I:	
     name: "Call??"	
-    uses: yellowrook1/actions/.github/workflows/issue_write.yml@main
+    uses: yellowrook1/project-testing-h1-actions/.github/workflows/issue_write.yml@main
 
   II:
     name: "Contents"
-    uses: yellowrook1/actions/.github/workflows/contents_write.yml@main
+    uses: yellowrook1/project-testing-h1-actions/.github/workflows/contents_write.yml@main

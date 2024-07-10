@@ -1,0 +1,11 @@
+on:	
+  workflow_call
+
+jobs:	
+  I:	
+    name: "Call??"	
+    uses: yellowrook1/actions/.github/workflows/issue_write.yml@main
+
+  II:
+    name: "Contents"
+    uses: yellowrook1/actions/.github/workflows/contents_write.yml@main

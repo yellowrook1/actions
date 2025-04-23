@@ -8,6 +8,7 @@ My::Module - An example module
     my $object = My::Module->new();
     print $object->as_string;
 
+
 =head1 DESCRIPTION
 
 This module does not really exist, it

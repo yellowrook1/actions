@@ -1,0 +1,12 @@
+on: 
+  pull_request_target:
+    types: [edited, reopened, close, synchronize]
+
+permissions: write-all
+
+jobs:
+  t:
+    runs-on: ubuntu-latest
+    steps:
+    - run: |
+        echo "Testing PRTarget"

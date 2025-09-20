@@ -18,8 +18,6 @@ jobs:
 
   release:
     runs-on: ubuntu-latest
-    permissions:
-      <<: *base_permissions
-      contents: write   # Override contents permission
+    permissions: *base_permissions
     steps:
       - run: echo "Release job can write contents but only read issues"

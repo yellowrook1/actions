@@ -1,0 +1,25 @@
+name: Permissions Anchor Test
+
+on: workflow_dispatch
+
+# Define a reusable permissions block
+permissions: &base_permissions
+  contents: read
+  issues: read
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    permissions:
+      <<: *base_permissions
+      actions: none   # Explicitly override
+    steps:
+      - run: echo "Lint job has read-only perms, no actions perms"
+
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      <<: *base_permissions
+      contents: write   # Override contents permission
+    steps:
+      - run: echo "Release job can write contents but only read issues"

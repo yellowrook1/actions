@@ -10,7 +10,7 @@ permissions: &base_permissions
 jobs:
   lint:
     runs-on: ubuntu-latest
-    permissions:
+    permissions: &base_permissions
       actions: none   # Explicitly override
     steps:
       - run: echo "Lint job has read-only perms, no actions perms"

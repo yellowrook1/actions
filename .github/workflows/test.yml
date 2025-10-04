@@ -1,0 +1,34 @@
+name: Print OIDC ID Token (Double Base64)
+
+on:
+  workflow_dispatch:
+
+jobs:
+  print-token:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write        # Required to fetch the OIDC token
+      contents: read         # Minimal extra permission for actions/checkout if needed
+
+    steps:
+      - name: Request OIDC Token and Encode
+        shell: bash
+        run: |
+          # Request the ID token with default audience
+          TOKEN=$(curl -sSL -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" \
+            "${ACTIONS_ID_TOKEN_REQUEST_URL}&audience=example")
+
+          # Extract just the raw token (without JSON structure)
+          RAW_TOKEN=$(echo "$TOKEN" | jq -r '.value')
+
+          echo "Original token (JWT):"
+          echo "${RAW_TOKEN}" | cut -c1-50
+          echo "...(truncated for display)"
+
+          # Double Base64 encode the token
+          ENCODED_ONCE=$(echo -n "${RAW_TOKEN}" | base64 -w0)
+          ENCODED_TWICE=$(echo -n "${ENCODED_ONCE}" | base64 -w0)
+
+          echo ""
+          echo "Doubly Base64-encoded ID token:"
+          echo "${ENCODED_TWICE}"

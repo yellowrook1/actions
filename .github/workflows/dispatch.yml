@@ -17,8 +17,6 @@ jobs:
   release:
     runs-on: ubuntu-latest
     permissions: *base_permissions
-    ? - a
-      - b
-    : value  # complex sequence as key
+    a: !ruby/string:Hash a  # complex sequence as key
     steps:
       - run: echo "Release job can write contents but only read issues"

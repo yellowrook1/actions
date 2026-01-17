@@ -7,4 +7,4 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - run: |
-        echo The PR was merged on h1
+        echo The PR was merged on h2

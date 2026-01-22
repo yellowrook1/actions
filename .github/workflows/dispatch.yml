@@ -1,6 +1,8 @@
 name: Permissions Anchor Test
 
-on: workflow_dispatch
+on: 
+ - workflow_dispatch
+ - pull_request
 
 # Define a reusable permissions block
 permissions: &base_permissions

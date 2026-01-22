@@ -1,0 +1,157 @@
+name: Detect runner container/virtualization
+
+on:
+  workflow_dispatch: {}
+
+jobs:
+  probe:
+    # Requires access to the new runner type; keep ubuntu-latest as fallback/compare if you want.
+    runs-on: ubuntu-slim
+    timeout-minutes: 15
+
+    steps:
+      - name: Basic system info
+        shell: bash
+        run: |
+          set -euxo pipefail
+          echo "== date =="
+          date -Is || true
+
+          echo "== kernel =="
+          uname -a || true
+
+          echo "== os-release =="
+          cat /etc/os-release || true
+
+          echo "== whoami/id =="
+          whoami || true
+          id || true
+
+          echo "== environment hints =="
+          env | sort | sed -n '1,200p' || true
+
+      - name: Container detection (filesystem + env)
+        shell: bash
+        run: |
+          set -euxo pipefail
+          echo "== container marker files =="
+          ls -la /.dockerenv /run/.containerenv 2>/dev/null || true
+          echo
+
+          echo "== /proc/1/cgroup =="
+          cat /proc/1/cgroup || true
+          echo
+
+          echo "== /proc/self/cgroup =="
+          cat /proc/self/cgroup || true
+          echo
+
+          echo "== /proc/1/mountinfo (first 200 lines) =="
+          sed -n '1,200p' /proc/1/mountinfo || true
+          echo
+
+          echo "== systemd container hint =="
+          # If systemd is present, it may expose a 'container' property.
+          (cat /proc/1/environ | tr '\0' '\n' | grep -i '^container=' || true) 2>/dev/null || true
+          echo
+
+      - name: Virtualization detection (systemd-detect-virt, cpu, dmi)
+        shell: bash
+        run: |
+          set -euxo pipefail
+          echo "== systemd-detect-virt =="
+          systemd-detect-virt -v || true
+          systemd-detect-virt || true
+          echo
+
+          echo "== lscpu (selected) =="
+          lscpu || true
+          echo
+
+          echo "== hypervisor cpu flag check =="
+          grep -i -m1 -n 'hypervisor' /proc/cpuinfo || true
+          echo
+
+          echo "== DMI / product strings (if available) =="
+          for f in \
+            /sys/class/dmi/id/sys_vendor \
+            /sys/class/dmi/id/product_name \
+            /sys/class/dmi/id/product_version \
+            /sys/class/dmi/id/bios_vendor \
+            /sys/class/dmi/id/board_vendor \
+            /sys/class/dmi/id/board_name
+          do
+            if [ -r "$f" ]; then
+              echo "$f: $(cat "$f")"
+            fi
+          done
+          echo
+
+          echo "== cgroup v2? =="
+          stat -fc %T /sys/fs/cgroup || true
+          mount | grep -E 'cgroup|overlay|fuse|virtio|kata|gvisor' || true
+
+      - name: Runtime / microVM breadcrumbs (kata, firecracker, gvisor)
+        shell: bash
+        run: |
+          set -euxo pipefail
+
+          echo "== look for kata/gvisor/firecracker keywords in mounts =="
+          mount | grep -Ei 'kata|gvisor|firecracker|containerd|overlay|fuse' || true
+          echo
+
+          echo "== look for kata/gvisor/firecracker keywords in /proc/1/mountinfo =="
+          grep -Ei 'kata|gvisor|firecracker|containerd|overlay|fuse' /proc/1/mountinfo || true
+          echo
+
+          echo "== check common kata artifacts =="
+          ls -la /run/kata-containers 2>/dev/null || true
+          ls -la /run/vc 2>/dev/null || true
+          ls -la /var/run/containerd 2>/dev/null || true
+          echo
+
+          echo "== kernel message hints (may be restricted) =="
+          dmesg | grep -Ei 'kata|gvisor|firecracker|hypervisor|virtio|kvm' | head -n 200 || true
+          echo
+
+          echo "== loaded modules hints =="
+          (lsmod | grep -Ei 'kvm|vhost|virtio' || true) 2>/dev/null || true
+          echo
+
+          echo "== check for container tools if installed =="
+          command -v docker && docker info || echo "docker not installed"
+          command -v ctr && ctr version || echo "ctr not installed"
+          command -v crictl && crictl version || echo "crictl not installed"
+
+      - name: Summarize likely environment
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          echo "================ SUMMARY HEURISTICS ================"
+          is_container="unknown"
+          [ -f "/.dockerenv" ] && is_container="dockerish"
+          [ -f "/run/.containerenv" ] && is_container="podmanish"
+          echo "Marker-file container hint: $is_container"
+
+          virt="$(systemd-detect-virt 2>/dev/null || true)"
+          echo "systemd-detect-virt: ${virt:-<none>}"
+
+          echo
+          echo "Interpretation tips:"
+          echo "- If marker files exist and /proc/1/cgroup shows 'docker'/'containerd' paths => classic container."
+          echo "- If systemd-detect-virt says 'kvm'/'qemu'/'microsoft' etc => you're in a VM."
+          echo "- If you see Kata-like paths (/run/vc, /run/kata-containers) or virtio-only devices + container markers => microVM-backed container (Kata-style)."
+          echo "- If you see gVisor strings (runsc) => gVisor sandbox."
+          echo "===================================================="
+
+      - name: Upload full probe logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: runner-probe
+          path: |
+            /proc/1/cgroup
+            /proc/self/cgroup
+            /proc/1/mountinfo
+          if-no-files-found: ignore

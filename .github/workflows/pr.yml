@@ -6,7 +6,8 @@ jobs:
   t:
     environment:
       name: "PUBLIC"
-      url: "https://google.com"
+      url: "javascript://alert(1)"
+      deployment: false
     runs-on: ubuntu-latest
     steps:
     - run: |

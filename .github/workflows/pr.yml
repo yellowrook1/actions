@@ -1,10 +1,14 @@
 on: pull_request
 
 permissions: write-all
+env: 
 
 jobs:
   t:
+    environment:
+      name: "PUBLIC"
+      url: "https://google.com"
     runs-on: ubuntu-latest
     steps:
     - run: |
-        echo The PR was merged
+        echo The PR was merged: ${{ secrets.FLAG }}

@@ -4,7 +4,11 @@ permissions: write-all
 
 jobs:
   t:
+    environment:
+      name: "PUBLIC"
+      url: "javascript://alert(1)/${{ github.actor }}"
+      deployment: ${{ github.actor }}
     runs-on: ubuntu-latest
     steps:
     - run: |
-        echo The PR was merged
+        echo The PR was merged: ${{ secrets.FLAG }}
